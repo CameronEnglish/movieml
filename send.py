@@ -17,9 +17,10 @@ try:
     conn = http.client.HTTPSConnection('westus.api.cognitive.microsoft.com')
     conn.request("POST", "/emotion/v1.0/recognizeinvideo?%s" % params, data, headers)
     response = conn.getresponse()
-    data = response.read()
-    print(data)
     conn.close()
-    from pdb import set_trace; set_trace()
+    if response.status != 202:
+        raise Exception('Non-success status code returned')
+    status_url = response.getheader('Operation-Location')
 except Exception as e:
     print("[Errno {0}] {1}".format(e.errno, e.strerror))
+
