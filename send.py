@@ -2,16 +2,20 @@ import http.client, urllib.request, urllib.parse, urllib.error, base64
 import json
 import sys
 import time
+import os
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 
 base_headers = {
-    # Request headers
-    'Ocp-Apim-Subscription-Key': '{subscription key}'
+        # Request headers
+        'Ocp-Apim-Subscription-Key': os.environ.get("MS_API_KEY")
 }
 
 def start_processing(data):
     headers = base_headers.copy()
     headers['Content-Type'] = 'application/octet-stream'
-    
+
     params = urllib.parse.urlencode({
         # Request parameters
         'outputStyle': 'aggregate',
@@ -44,7 +48,6 @@ def check_status(url):
 
 
 raw_data = open(sys.argv[1], 'rb').read()
-base_headers['Ocp-Apim-Subscription-Key'] = sys.argv[2]
 
 url = start_processing(raw_data)
 print('Uploaded, status URL is ' + str(url))
