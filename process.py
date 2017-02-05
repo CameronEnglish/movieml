@@ -1,13 +1,13 @@
 import json
 import csv
 
-with open('result2.json') as f:
+with open('result_frame_raiders.json') as f:
     data = json.load(f)
 
 frames = [
     frame
     for fragment in data['fragments']
-    for frame in (fragment['events'] if 'events' in fragment else [])
+    for frame in (fragment['events'] if 'events' in fragment else [[] for _ in range(round(data['framerate'] * fragment['duration'] / data['timescale']))])
 ]
 
 max_id = max([event['id'] for frame in frames for event in frame])
@@ -24,7 +24,7 @@ for frame in frames:
             scores[i].append(None)
 
 for i in range(max_id + 1):
-    with open('result_{}.csv'.format(i), 'w') as f:
+    with open('result_raiders_{}.csv'.format(i), 'w') as f:
         fieldnames = ['frame', 'surprise', 'fear', 'disgust', 'anger', 'contempt', 'happiness', 'neutral', 'sadness']
         blank = { key: "" for key in fieldnames }
         writer = csv.DictWriter(f, fieldnames=fieldnames, dialect='unix')
